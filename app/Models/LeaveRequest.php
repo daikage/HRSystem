@@ -19,4 +19,13 @@ class LeaveRequest extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Number of calendar days covered by this leave request (inclusive).
+     */
+    public function getDurationAttribute(): int
+    {
+        return \Illuminate\Support\Carbon::parse($this->start_date)
+            ->diffInDays(\Illuminate\Support\Carbon::parse($this->end_date)) + 1;
+    }
 }

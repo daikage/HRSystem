@@ -15,6 +15,7 @@ class EmployeeProfile extends Model
         'job_title',
         'joining_date',
         'salary',
+        'annual_leave_entitlement',
     ];
 
     public function user()

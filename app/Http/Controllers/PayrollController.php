@@ -4,15 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\PayrollRecord;
 use App\Models\User;
+use App\Notifications\PayrollPaidNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PayrollController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (Auth::user()->hasRole('admin')) {
-            $payrollRecords = PayrollRecord::with('user')->orderBy('pay_period_end', 'desc')->paginate(10);
+            $query = PayrollRecord::with('user');
+
+            if ($status = $request->query('status')) {
+                $query->where('status', $status);
+            }
+
+            if ($search = $request->query('search')) {
+                $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('email', 'like', '%'.$search.'%');
+                });
+            }
+
+            $payrollRecords = $query->orderBy('pay_period_end', 'desc')->paginate(10)->withQueryString();
         } else {
             $payrollRecords = PayrollRecord::where('user_id', Auth::id())->orderBy('pay_period_end', 'desc')->paginate(10);
         }
@@ -50,6 +66,17 @@ class PayrollController extends Controller
         $deductions = $validated['deductions'] ?? 0;
         $netPay = $validated['base_salary'] + $bonuses - $deductions;
 
+        // Prevent generating a second record that overlaps an existing pay period
+        // for the same employee.
+        $periodExists = PayrollRecord::where('user_id', $validated['user_id'])
+            ->whereDate('pay_period_start', '<=', $validated['pay_period_end'])
+            ->whereDate('pay_period_end', '>=', $validated['pay_period_start'])
+            ->exists();
+
+        if ($periodExists) {
+            return back()->with('error', 'A payroll record already exists for this employee in an overlapping pay period.')->withInput();
+        }
+
         PayrollRecord::create([
             'user_id' => $validated['user_id'],
             'pay_period_start' => $validated['pay_period_start'],
@@ -83,6 +110,15 @@ class PayrollController extends Controller
         $payroll->update([
             'status' => 'paid',
         ]);
+
+        // Notify the employee their payslip is available.
+        Notification::send(
+            $payroll->user,
+            new PayrollPaidNotification(
+                $payroll->pay_period_start.' to '.$payroll->pay_period_end,
+                number_format($payroll->net_pay, 2)
+            )
+        );
 
         return redirect()->back()->with('success', 'Payroll record marked as paid.');
     }
