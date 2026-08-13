@@ -23,8 +23,12 @@ class OnboardingReviewController extends Controller
 
     public function approve(Request $request, $id)
     {
-        $this->onboardingService->approveRequest($id);
-        return redirect()->route('admin.onboarding.index')->with('success', 'Onboarding request approved.');
+        try {
+            $password = $this->onboardingService->approveRequest($id);
+            return redirect()->route('admin.onboarding.index')->with('success', 'Onboarding request approved. Employee account created with temporary password: ' . $password);
+        } catch (\Exception $e) {
+            return redirect()->route('admin.onboarding.index')->with('error', 'Error approving request: ' . $e->getMessage());
+        }
     }
 
     public function reject(Request $request, $id)

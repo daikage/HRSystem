@@ -12,6 +12,12 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div class="mb-6 bg-red-500/10 border border-red-500/20 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg relative animate-fade-in" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        @endif
+
         <div class="glass dark:glass-dark overflow-hidden sm:rounded-xl">
             <div class="p-6">
                 

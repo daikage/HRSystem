@@ -7,9 +7,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -23,7 +22,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('leave-requests/{leave_request}/status', [\App\Http\Controllers\LeaveRequestController::class, 'updateStatus'])->name('leave-requests.update-status');
     
     Route::resource('attendance', \App\Http\Controllers\AttendanceController::class)->only(['index']);
-    Route::resource('payroll', \App\Http\Controllers\PayrollController::class)->only(['index']);
+    Route::post('attendance/clock-in', [\App\Http\Controllers\AttendanceController::class, 'clockIn'])->name('attendance.clock-in');
+    Route::post('attendance/clock-out', [\App\Http\Controllers\AttendanceController::class, 'clockOut'])->name('attendance.clock-out');
+    
+    Route::resource('payroll', \App\Http\Controllers\PayrollController::class)->except(['edit', 'update', 'destroy']);
+    Route::patch('payroll/{payroll}/mark-paid', [\App\Http\Controllers\PayrollController::class, 'markPaid'])->name('payroll.mark-paid');
 });
 
 require __DIR__.'/auth.php';

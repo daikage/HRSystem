@@ -5,6 +5,9 @@ namespace App\Core\Onboarding\Services;
 use App\Core\Onboarding\Interfaces\OnboardingRepositoryInterface;
 use App\Core\Onboarding\Interfaces\OnboardingServiceInterface;
 use Illuminate\Support\Str;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class OnboardingService implements OnboardingServiceInterface
 {
@@ -24,8 +27,38 @@ class OnboardingService implements OnboardingServiceInterface
 
     public function approveRequest(int $requestId)
     {
-        // Add logic here later to create a User account and Employee Profile
-        return $this->repository->updateStatus($requestId, 'approved');
+        return DB::transaction(function () use ($requestId) {
+            $request = $this->repository->findById($requestId);
+            
+            if (!$request || $request->status !== 'pending') {
+                throw new \Exception('Invalid or already processed onboarding request.');
+            }
+
+            // Generate password
+            $generatedPassword = Str::random(12);
+
+            // Create User
+            $user = User::create([
+                'name' => $request->first_name . ' ' . $request->last_name,
+                'email' => $request->email,
+                'password' => Hash::make($generatedPassword),
+            ]);
+
+            // Assign role
+            $user->assignRole('employee');
+
+            // Create Profile
+            $user->employeeProfile()->create([
+                'department' => 'Pending Assignment',
+                'job_title' => 'Pending Assignment',
+                'joining_date' => now(),
+            ]);
+
+            // Update status
+            $this->repository->updateStatus($requestId, 'approved');
+
+            return $generatedPassword;
+        });
     }
 
     public function rejectRequest(int $requestId, string $reason)
