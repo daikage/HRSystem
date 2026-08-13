@@ -6,7 +6,10 @@
 
 @layer base {
   body {
-    @apply font-sans antialiased text-slate-800 bg-slate-50;
+    @apply font-sans antialiased text-black bg-white;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-purple-700;
   }
 }
 

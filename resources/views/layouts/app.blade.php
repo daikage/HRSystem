@@ -10,7 +10,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
+    <body class="font-sans antialiased text-black bg-white transition-colors duration-300">
         <div class="min-h-screen relative overflow-hidden">
             <!-- Subtle background elements -->
             <div class="absolute top-0 w-full h-96 bg-gradient-to-b from-primary-50 to-transparent dark:from-primary-900/20 z-0 pointer-events-none"></div>
