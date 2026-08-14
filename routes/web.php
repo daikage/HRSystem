@@ -16,15 +16,16 @@ Route::middleware(['auth', 'password.changed'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // HR Modules
-    // Employee directory is viewable by all authenticated users, but only
-    // admins may create/edit/delete employees.
-    Route::resource('employees', \App\Http\Controllers\EmployeeController::class)->only(['index', 'show']);
-
+    // Employee directory (index/show) is viewable by all authenticated users,
+    // but only admins may create/edit/delete employees. The admin-gated routes
+    // are declared FIRST so that the literal "create" route is matched before
+    // the parameterised "show" route registered in the public resource below.
     Route::middleware('role:admin')->group(function () {
-        // Register exports before the parameterised resource routes.
         Route::get('employees/export', [\App\Http\Controllers\EmployeeController::class, 'export'])->name('employees.export');
         Route::resource('employees', \App\Http\Controllers\EmployeeController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
     });
+
+    Route::resource('employees', \App\Http\Controllers\EmployeeController::class)->only(['index', 'show']);
 
     Route::get('leave-requests/export', [\App\Http\Controllers\LeaveRequestController::class, 'export'])->name('leave-requests.export');
     Route::resource('leave-requests', \App\Http\Controllers\LeaveRequestController::class)->except(['show', 'edit', 'update']);
