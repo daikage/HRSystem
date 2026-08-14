@@ -70,6 +70,26 @@ class PayrollTest extends TestCase
         ]);
     }
 
+    public function test_net_pay_cannot_be_negative(): void
+    {
+        $employee = $this->employeeUser();
+
+        // Deductions exceed base salary + bonuses, which would make net pay negative.
+        $this->actingAs($this->adminUser())
+            ->post('/payroll', [
+                'user_id' => $employee->id,
+                'pay_period_start' => '2026-08-01',
+                'pay_period_end' => '2026-08-14',
+                'base_salary' => 100,
+                'bonuses' => 0,
+                'deductions' => 500,
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('error');
+
+        $this->assertEquals(0, PayrollRecord::where('user_id', $employee->id)->count());
+    }
+
     public function test_overlapping_pay_periods_are_blocked(): void
     {
         $employee = $this->employeeUser();

@@ -37,6 +37,13 @@ class OnboardingService implements OnboardingServiceInterface
             // Generate password
             $generatedPassword = Str::random(12);
 
+            // An onboarding can only be approved once a user with the same
+            // address does not already exist; otherwise the unique users.email
+            // constraint would throw an opaque database error.
+            if (User::where('email', $request->email)->exists()) {
+                throw new \Exception('A user account with the email '.$request->email.' already exists.');
+            }
+
             // Create User
             $user = User::create([
                 'name' => $request->first_name . ' ' . $request->last_name,

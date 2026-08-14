@@ -66,6 +66,11 @@ class PayrollController extends Controller
         $deductions = $validated['deductions'] ?? 0;
         $netPay = $validated['base_salary'] + $bonuses - $deductions;
 
+        // A payslip can never have a negative net pay; reject before persisting.
+        if ($netPay < 0) {
+            return back()->with('error', 'Deductions cannot exceed the employee\'s gross pay (base salary plus bonuses).')->withInput();
+        }
+
         // Prevent generating a second record that overlaps an existing pay period
         // for the same employee.
         $periodExists = PayrollRecord::where('user_id', $validated['user_id'])
