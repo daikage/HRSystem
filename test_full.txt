@@ -1,0 +1,25 @@
+﻿
+   PASS  Tests\Unit\ExampleTest
+  Γ£ô that true is true
+
+   PASS  Tests\Feature\AttendanceTest
+  Γ£ô user can clock in                                                                                                              0.52s  
+  Γ£ô user cannot clock in twice in a day                                                                                            0.03s  
+  Γ£ô user cannot clock out without clocking in first                                                                                0.03s  
+  Γ£ô unique constraint prevents duplicate daily records                                                                             0.03s  
+
+   PASS  Tests\Feature\Auth\AuthenticationTest
+  Γ£ô login screen can be rendered                                                                                                   0.05s  
+  Γ£ô users can authenticate using the login screen                                                                                  0.04s  
+  Γ£ô users can not authenticate with invalid password                                                                               0.73s  
+  Γ£ô users can logout                                                                                                               0.04s  
+
+   PASS  Tests\Feature\Auth\EmailVerificationTest
+  Γ£ô email verification screen can be rendered                                                                                      0.23s  
+  Γ£ô email can be verified                                                                                                          1.09s  
+  Γ£ô email is not verified with invalid hash                                                                                        0.23s  
+
+   PASS  Tests\Feature\Auth\PasswordConfirmationTest
+  Γ£ô confirm password screen can be rendered                                                                                        0.54s  
+  Γ£ô password can be confirmed                                                                                                      0.05s  
+  Γ£ô password is not confirmed with invalid password                                                                                0.24s  
