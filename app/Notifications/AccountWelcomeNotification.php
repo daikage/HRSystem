@@ -11,7 +11,7 @@ class AccountWelcomeNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public string $temporaryPassword)
+    public function __construct(public string $recipientName, public string $temporaryPassword)
     {
     }
 
@@ -24,7 +24,7 @@ class AccountWelcomeNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Your HR System account')
-            ->greeting('Welcome, '.$notifiable->name.'!')
+            ->greeting('Welcome, '.$this->recipientName.'!')
             ->line('An account has been created for you on the HR System.')
             ->line('Your temporary password is: '.$this->temporaryPassword)
             ->action('Sign in and change your password', url('/login'))

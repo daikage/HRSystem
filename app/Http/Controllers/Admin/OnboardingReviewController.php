@@ -37,7 +37,7 @@ class OnboardingReviewController extends Controller
                     ->onQueue('notifications')
             );
             Notification::route('mail', $onboarding->email)->notify(
-                new AccountWelcomeNotification($password)
+                new AccountWelcomeNotification($onboarding->first_name.' '.$onboarding->last_name, $password)
             );
 
             return redirect()->route('admin.onboarding.index')->with('success', 'Onboarding request approved. Welcome email with temporary password sent.');

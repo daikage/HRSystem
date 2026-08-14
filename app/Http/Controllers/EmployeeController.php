@@ -84,7 +84,7 @@ class EmployeeController extends Controller
 
         // Send the temporary password securely instead of exposing it on screen.
         Notification::route('mail', $user->email)->notify(
-            new AccountWelcomeNotification($generatedPassword)
+            new AccountWelcomeNotification($user->name, $generatedPassword)
         );
 
         return redirect()->route('employees.index')->with('success', 'Employee created successfully. A welcome email with a temporary password has been sent.');
