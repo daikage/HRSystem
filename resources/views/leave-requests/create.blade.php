@@ -12,6 +12,14 @@
 
     <div class="pb-12">
         <div class="max-w-2xl mx-auto">
+            @if($allowance)
+                <div class="mb-4 glass dark:glass-dark sm:rounded-xl p-4 flex items-center justify-between">
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Annual Leave Balance</p>
+                    <p class="text-lg font-semibold text-slate-900 dark:text-white">
+                        {{ $allowance['remaining'] }} <span class="text-sm text-slate-500 dark:text-slate-400">/ {{ $allowance['entitlement'] }} days remaining</span>
+                    </p>
+                </div>
+            @endif
             <div class="glass dark:glass-dark overflow-hidden sm:rounded-xl">
                 <div class="p-8">
                     <form action="{{ route('leave-requests.store') }}" method="POST" class="space-y-6">

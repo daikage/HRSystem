@@ -42,6 +42,7 @@ class OnboardingService implements OnboardingServiceInterface
                 'name' => $request->first_name . ' ' . $request->last_name,
                 'email' => $request->email,
                 'password' => Hash::make($generatedPassword),
+                'must_change_password' => true,
             ]);
 
             // Assign role
@@ -64,6 +65,11 @@ class OnboardingService implements OnboardingServiceInterface
     public function rejectRequest(int $requestId, string $reason)
     {
         return $this->repository->updateStatus($requestId, 'rejected', $reason);
+    }
+
+    public function requestInfo(int $requestId, string $message)
+    {
+        return $this->repository->updateStatus($requestId, 'info_requested', $message);
     }
 
     public function getPendingRequests()

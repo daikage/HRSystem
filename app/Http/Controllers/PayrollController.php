@@ -122,4 +122,46 @@ class PayrollController extends Controller
 
         return redirect()->back()->with('success', 'Payroll record marked as paid.');
     }
+public function export(Request $request): StreamedResponse
+    {
+        if (!Auth::user()->hasRole('admin')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $query = PayrollRecord::with('user');
+
+        if ($status = $request->query('status')) {
+            $query->where('status', $status);
+        }
+
+        if ($search = $request->query('search')) {
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('email', 'like', '%'.$search.'%');
+            });
+        }
+
+        $records = $query->orderBy('pay_period_end', 'desc')->get();
+
+        return response()->streamDownload(function () use ($records) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['Employee', 'Email', 'Pay Period Start', 'Pay Period End', 'Base Salary', 'Bonuses', 'Deductions', 'Net Pay', 'Status']);
+
+            foreach ($records as $record) {
+                fputcsv($out, [
+                    $record->user->name ?? '',
+                    $record->user->email ?? '',
+                    $record->pay_period_start,
+                    $record->pay_period_end,
+                    $record->base_salary,
+                    $record->bonuses,
+                    $record->deductions,
+                    $record->net_pay,
+                    $record->status,
+                ]);
+            }
+
+            fclose($out);
+        }, 'payroll-'.now()->format('Y-m-d').'.csv');
+    }
 }

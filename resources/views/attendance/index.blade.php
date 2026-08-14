@@ -71,7 +71,31 @@
             <!-- Historical Data -->
             <div class="glass dark:glass-dark overflow-hidden sm:rounded-xl">
                 <div class="p-6">
-                    <h3 class="text-lg font-medium text-slate-900 dark:text-white mb-4">Attendance History</h3>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <h3 class="text-lg font-medium text-slate-900 dark:text-white">Attendance History</h3>
+                        @if(Auth::user()->hasRole('admin'))
+                            <a href="{{ route('attendance.export') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all self-start sm:self-auto">
+                                Export CSV
+                            </a>
+                        @endif
+                    </div>
+
+                    @if(Auth::user()->hasRole('admin'))
+                        <form method="GET" action="{{ route('attendance.index') }}" class="mb-6 flex flex-col sm:flex-row gap-3 items-end">
+                            <div class="flex-1">
+                                <x-text-input name="search" value="{{ request('search') }}" placeholder="Search by employee name or email..." class="block w-full" />
+                            </div>
+                            <div>
+                                <input type="date" name="date" value="{{ request('date') }}" class="block rounded-lg border-slate-300 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2">
+                            </div>
+                            <div class="flex gap-3">
+                                <x-primary-button type="submit">{{ __('Filter') }}</x-primary-button>
+                                @if(request('search') || request('date'))
+                                    <a href="{{ route('attendance.index') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Clear</a>
+                                @endif
+                            </div>
+                        </form>
+                    @endif
                     
                     @if($attendanceRecords->isEmpty())
                         <div class="text-center py-12 border-t border-slate-200 dark:border-slate-700">

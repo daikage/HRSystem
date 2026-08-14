@@ -66,25 +66,46 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium space-x-3">
-                                            <form action="{{ route('admin.onboarding.approve', $req->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
-                                                    Approve
-                                                </button>
-                                            </form>
-                                            
-                                            <form action="{{ route('admin.onboarding.reject', $req->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                <input type="hidden" name="reason" value="Rejected by admin">
-                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-slate-300 dark:border-slate-600 text-xs font-medium rounded shadow-sm text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
-                                                    Reject
-                                                </button>
-                                            </form>
+                                            <div class="flex justify-end gap-2">
+                                                <form action="{{ route('admin.onboarding.approve', $req->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                                                        Approve
+                                                    </button>
+                                                </form>
+
+                                                <details class="relative">
+                                                    <summary class="inline-flex items-center px-3 py-1.5 border border-slate-300 dark:border-slate-600 text-xs font-medium rounded text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer list-none">
+                                                        Reject
+                                                    </summary>
+                                                    <form action="{{ route('admin.onboarding.reject', $req->id) }}" method="POST" class="absolute right-0 mt-2 w-72 glass dark:glass-dark rounded-lg p-4 z-20 space-y-2 shadow-xl border border-slate-200 dark:border-slate-700" onsubmit="return confirm('Reject this onboarding request?');">
+                                                        @csrf
+                                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300">Reason for rejection</label>
+                                                        <textarea name="reason" rows="2" required maxlength="1000" class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-red-500 focus:border-red-500" placeholder="Required..."></textarea>
+                                                        <button type="submit" class="w-full inline-flex justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700">Confirm Reject</button>
+                                                    </form>
+                                                </details>
+
+                                                <details class="relative">
+                                                    <summary class="inline-flex items-center px-3 py-1.5 border border-slate-300 dark:border-slate-600 text-xs font-medium rounded text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer list-none">
+                                                        Request Info
+                                                    </summary>
+                                                    <form action="{{ route('admin.onboarding.request-info', $req->id) }}" method="POST" class="absolute right-0 mt-2 w-72 glass dark:glass-dark rounded-lg p-4 z-20 space-y-2 shadow-xl border border-slate-200 dark:border-slate-700">
+                                                        @csrf
+                                                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300">Message to candidate</label>
+                                                        <textarea name="message" rows="2" required maxlength="1000" class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-primary-500 focus:border-primary-500" placeholder="What additional information do you need?"></textarea>
+                                                        <button type="submit" class="w-full inline-flex justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-primary-600 hover:bg-primary-700">Send Request</button>
+                                                    </form>
+                                                </details>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mt-6">
+                        {{ $requests->links() }}
                     </div>
                 @endif
             </div>

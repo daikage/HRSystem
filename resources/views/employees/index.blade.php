@@ -5,9 +5,16 @@
                 <svg class="w-6 h-6 mr-2 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 {{ __('Employee Directory') }}
             </h2>
-            <a href="{{ route('employees.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-700 active:bg-primary-900 focus:outline-none focus:border-primary-900 focus:ring ring-primary-300 disabled:opacity-25 transition ease-in-out duration-150">
-                + Add Employee
-            </a>
+            <div class="flex items-center space-x-3">
+                @if(Auth::user()->hasRole('admin'))
+                    <a href="{{ route('employees.export') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                        Export CSV
+                    </a>
+                    <a href="{{ route('employees.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-700 active:bg-primary-900 focus:outline-none focus:border-primary-900 focus:ring ring-primary-300 disabled:opacity-25 transition ease-in-out duration-150">
+                        + Add Employee
+                    </a>
+                @endif
+            </div>
         </div>
     </x-slot>
 
@@ -23,6 +30,18 @@
                 <span class="block sm:inline">{{ session('error') }}</span>
             </div>
         @endif
+
+        <form method="GET" action="{{ route('employees.index') }}" class="mb-6 glass dark:glass-dark sm:rounded-xl p-4 flex flex-col sm:flex-row gap-3">
+            <div class="flex-1">
+                <x-text-input name="search" value="{{ request('search') }}" placeholder="Search by name, email, department or job title..." class="block w-full" />
+            </div>
+            <div class="flex gap-3">
+                <x-primary-button type="submit">{{ __('Search') }}</x-primary-button>
+                @if(request('search'))
+                    <a href="{{ route('employees.index') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Clear</a>
+                @endif
+            </div>
+        </form>
 
         <div class="glass dark:glass-dark overflow-hidden sm:rounded-xl">
             <div class="p-6">

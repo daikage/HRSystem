@@ -20,6 +20,11 @@ interface OnboardingServiceInterface
     public function rejectRequest(int $requestId, string $reason);
 
     /**
+     * Request additional information from the applicant.
+     */
+    public function requestInfo(int $requestId, string $message);
+
+    /**
      * Get pending requests for admin review.
      */
     public function getPendingRequests();

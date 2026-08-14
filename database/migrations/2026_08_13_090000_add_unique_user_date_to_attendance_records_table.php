@@ -17,18 +17,18 @@ return new class extends Migration
         Schema::table('attendance_records', function (Blueprint $table) {
             $driver = Schema::getConnection()->getDriverName();
 
-            if ($driver === 'pgsql') {
-                DB::statement(
-                    'DELETE FROM attendance_records a USING attendance_records b '
-                    . 'WHERE a.user_id = b.user_id AND a.date = b.date AND a.id > b.id'
-                );
-            } else {
-                DB::statement(
-                    'DELETE a FROM attendance_records a '
+            $withoutBackup = match ($driver) {
+                'pgsql', 'sqlsrv' => 'DELETE FROM attendance_records a USING attendance_records b '
+                    . 'WHERE a.user_id = b.user_id AND a.date = b.date AND a.id > b.id',
+                'mysql' => 'DELETE a FROM attendance_records a '
                     . 'INNER JOIN attendance_records b '
-                    . 'ON a.user_id = b.user_id AND a.date = b.date AND a.id > b.id'
-                );
-            }
+                    . 'ON a.user_id = b.user_id AND a.date = b.date AND a.id > b.id',
+                // sqlite does not support UPDATE/DELETE with JOIN.
+                default => 'DELETE FROM attendance_records WHERE id NOT IN ('
+                    . 'SELECT MIN(id) FROM attendance_records GROUP BY user_id, date)',
+            };
+
+            DB::statement($withoutBackup);
         });
 
         Schema::table('attendance_records', function (Blueprint $table) {

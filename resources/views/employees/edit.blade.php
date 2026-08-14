@@ -71,6 +71,11 @@
                                     <input type="date" name="joining_date" id="joining_date" value="{{ old('joining_date', $employee->joining_date) }}" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-primary-500 focus:border-primary-500" required>
                                     @error('joining_date') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                                 </div>
+                                <div>
+                                    <label for="annual_leave_entitlement" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Annual Leave Entitlement</label>
+                                    <input type="number" min="0" max="365" name="annual_leave_entitlement" id="annual_leave_entitlement" value="{{ old('annual_leave_entitlement', $employee->annual_leave_entitlement ?? 20) }}" class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
+                                    @error('annual_leave_entitlement') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+                                </div>
                             </div>
                         </div>
                         

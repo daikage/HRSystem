@@ -5,9 +5,16 @@
                 <svg class="w-6 h-6 mr-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 {{ __('Leave Requests') }}
             </h2>
-            <a href="{{ route('leave-requests.create') }}" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-700 focus:outline-none focus:border-amber-900 focus:ring ring-amber-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm hover:-translate-y-0.5">
-                + Request Leave
-            </a>
+            <div class="flex items-center space-x-3">
+                @if(Auth::user()->hasRole('admin'))
+                    <a href="{{ route('leave-requests.export') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                        Export CSV
+                    </a>
+                @endif
+                <a href="{{ route('leave-requests.create') }}" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-700 focus:outline-none focus:border-amber-900 focus:ring ring-amber-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm hover:-translate-y-0.5">
+                    + Request Leave
+                </a>
+            </div>
         </div>
     </x-slot>
 
@@ -23,6 +30,45 @@
                 <span class="block sm:inline">{{ session('error') }}</span>
             </div>
         @endif
+
+        @if($allowance)
+            <div class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="glass dark:glass-dark sm:rounded-xl p-4">
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Annual Entitlement</p>
+                    <p class="mt-1 text-2xl font-semibold text-slate-900 dark:text-white">{{ $allowance['entitlement'] }} <span class="text-sm text-slate-500 dark:text-slate-400">days</span></p>
+                </div>
+                <div class="glass dark:glass-dark sm:rounded-xl p-4">
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Used</p>
+                    <p class="mt-1 text-2xl font-semibold text-amber-600 dark:text-amber-400">{{ $allowance['used'] }} <span class="text-sm text-slate-500 dark:text-slate-400">days</span></p>
+                </div>
+                <div class="glass dark:glass-dark sm:rounded-xl p-4">
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Remaining</p>
+                    <p class="mt-1 text-2xl font-semibold text-green-600 dark:text-green-400">{{ $allowance['remaining'] }} <span class="text-sm text-slate-500 dark:text-slate-400">days</span></p>
+                </div>
+            </div>
+        @endif
+
+        <form method="GET" action="{{ route('leave-requests.index') }}" class="mb-6 glass dark:glass-dark sm:rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-end">
+            @if(Auth::user()->hasRole('admin'))
+                <div class="flex-1">
+                    <x-text-input name="search" value="{{ request('search') }}" placeholder="Search by employee name or email..." class="block w-full" />
+                </div>
+            @endif
+            <div>
+                <select name="status" class="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
+                    <option value="">All Statuses</option>
+                    @foreach(['pending', 'approved', 'rejected'] as $s)
+                        <option value="{{ $s }}" @selected(request('status') === $s)>{{ ucfirst($s) }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex gap-3">
+                <x-primary-button type="submit">{{ __('Filter') }}</x-primary-button>
+                @if(request('status') || request('search'))
+                    <a href="{{ route('leave-requests.index') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Clear</a>
+                @endif
+            </div>
+        </form>
 
         <div class="glass dark:glass-dark overflow-hidden sm:rounded-xl">
             <div class="p-6">

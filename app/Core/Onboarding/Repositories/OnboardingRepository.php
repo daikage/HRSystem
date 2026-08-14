@@ -35,6 +35,6 @@ class OnboardingRepository implements OnboardingRepositoryInterface
 
     public function getPending()
     {
-        return OnboardingRequest::where('status', 'pending')->latest()->get();
+        return OnboardingRequest::where('status', 'pending')->latest()->paginate(10);
     }
 }

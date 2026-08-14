@@ -6,6 +6,9 @@
                 {{ __('Payroll Records') }}
             </h2>
             @if(Auth::user()->hasRole('admin'))
+                <a href="{{ route('payroll.export') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                    Export CSV
+                </a>
                 <a href="{{ route('payroll.create') }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm hover:-translate-y-0.5">
                     + Generate Payroll
                 </a>
@@ -24,6 +27,28 @@
             <div class="mb-6 bg-red-500/10 border border-red-500/20 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg relative animate-fade-in" role="alert">
                 <span class="block sm:inline">{{ session('error') }}</span>
             </div>
+        @endif
+
+        @if(Auth::user()->hasRole('admin'))
+            <form method="GET" action="{{ route('payroll.index') }}" class="mb-6 glass dark:glass-dark sm:rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-end">
+                <div class="flex-1">
+                    <x-text-input name="search" value="{{ request('search') }}" placeholder="Search by employee name or email..." class="block w-full" />
+                </div>
+                <div>
+                    <select name="status" class="block rounded-lg border-slate-300 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:ring-green-500 focus:border-green-500 px-3 py-2">
+                        <option value="">All Statuses</option>
+                        @foreach(['pending', 'paid'] as $s)
+                            <option value="{{ $s }}" @selected(request('status') === $s)>{{ ucfirst($s) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex gap-3">
+                    <x-primary-button type="submit">{{ __('Filter') }}</x-primary-button>
+                    @if(request('status') || request('search'))
+                        <a href="{{ route('payroll.index') }}" class="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Clear</a>
+                    @endif
+                </div>
+            </form>
         @endif
 
         <div class="glass dark:glass-dark overflow-hidden sm:rounded-xl">

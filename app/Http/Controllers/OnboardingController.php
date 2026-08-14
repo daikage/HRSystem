@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Core\Onboarding\Interfaces\OnboardingServiceInterface;
+use App\Models\User;
+use App\Notifications\NewOnboardingSubmissionNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class OnboardingController extends Controller
 {
@@ -40,6 +43,15 @@ class OnboardingController extends Controller
         ];
 
         $this->onboardingService->submitRequest($data);
+
+        // Notify all admins about the new submission.
+        Notification::send(
+            User::role('admin')->get(),
+            new NewOnboardingSubmissionNotification(
+                $validated['first_name'].' '.$validated['last_name'],
+                $validated['email']
+            )
+        );
 
         return redirect()->route('onboarding.success');
     }
