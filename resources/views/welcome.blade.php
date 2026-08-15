@@ -121,6 +121,14 @@
                         <svg class="w-4 h-4 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     </span>
                 </a>
+
+                <a href="{{ route('jobs.index') }}" class="group relative px-8 py-3 font-semibold text-purple-700 transition-all duration-300 ease-in-out bg-white border border-purple-300 rounded-full hover:border-purple-500 hover:shadow-[0_0_20px_rgba(147,51,234,0.15)] overflow-hidden shadow-sm">
+                    <span class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-10 bg-gradient-to-b from-transparent via-transparent to-black"></span>
+                    <span class="relative z-10 flex items-center gap-2">
+                        View Job Listings
+                        <svg class="w-4 h-4 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </span>
+                </a>
             </div>
 
             <!-- Feature highlights -->

@@ -7,6 +7,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Public Job Listings (visible to everyone, no sign-in required). The success
+// route is registered before the parameterised "show" route so the literal
+// "/jobs/applied" URL is matched correctly.
+Route::get('jobs', [\App\Http\Controllers\JobController::class, 'index'])->name('jobs.index');
+Route::get('jobs/applied', [\App\Http\Controllers\JobApplicationController::class, 'success'])->name('jobs.applied');
+Route::get('jobs/{job}', [\App\Http\Controllers\JobController::class, 'show'])->name('jobs.show');
+Route::get('jobs/{job}/apply', [\App\Http\Controllers\JobApplicationController::class, 'create'])->name('jobs.apply');
+Route::post('jobs/{job}/apply', [\App\Http\Controllers\JobApplicationController::class, 'store'])->name('jobs.apply.submit');
+
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', 'password.changed'])->name('dashboard');
 
@@ -14,6 +23,11 @@ Route::middleware(['auth', 'password.changed'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Employee documents (upload for verification + download own files)
+    Route::get('documents', [\App\Http\Controllers\UserDocumentController::class, 'index'])->name('documents.index');
+    Route::post('documents', [\App\Http\Controllers\UserDocumentController::class, 'store'])->name('documents.store');
+    Route::get('documents/{document}/download', [\App\Http\Controllers\UserDocumentController::class, 'download'])->name('documents.download');
 
     // HR Modules
     // Employee directory (index/show) is viewable by all authenticated users,
@@ -63,4 +77,28 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin/onboarding'
     Route::post('/{id}/approve', [OnboardingReviewController::class, 'approve'])->name('approve');
     Route::post('/{id}/reject', [OnboardingReviewController::class, 'reject'])->name('reject');
     Route::post('/{id}/request-info', [OnboardingReviewController::class, 'requestInfo'])->name('request-info');
+});
+
+// Admin Job Listings management (create/edit/close jobs posted publicly).
+Route::middleware(['auth', 'verified', 'role:admin'])->name('admin.')->group(function () {
+    Route::resource('admin/jobs', \App\Http\Controllers\Admin\JobListingController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    Route::patch('admin/jobs/{job}/status', [\App\Http\Controllers\Admin\JobListingController::class, 'updateStatus'])
+        ->name('jobs.status');
+
+    // Job applications reviewed from the recruitment / onboarding area.
+    Route::get('admin/job-applications', [\App\Http\Controllers\Admin\JobApplicationReviewController::class, 'index'])
+        ->name('job-applications.index');
+    Route::post('admin/job-applications/{application}/approve', [\App\Http\Controllers\Admin\JobApplicationReviewController::class, 'approve'])
+        ->name('job-applications.approve');
+    Route::post('admin/job-applications/{application}/reject', [\App\Http\Controllers\Admin\JobApplicationReviewController::class, 'reject'])
+        ->name('job-applications.reject');
+
+    // Employee document verification.
+    Route::get('admin/documents', [\App\Http\Controllers\Admin\DocumentReviewController::class, 'index'])
+        ->name('documents.index');
+    Route::post('admin/documents/{document}/approve', [\App\Http\Controllers\Admin\DocumentReviewController::class, 'approve'])
+        ->name('documents.approve');
+    Route::post('admin/documents/{document}/reject', [\App\Http\Controllers\Admin\DocumentReviewController::class, 'reject'])
+        ->name('documents.reject');
 });

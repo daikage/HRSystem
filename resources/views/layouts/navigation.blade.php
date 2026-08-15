@@ -28,9 +28,21 @@
                     <x-nav-link :href="route('payroll.index')" :active="request()->routeIs('payroll.*')">
                         {{ __('Payroll') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
+                        {{ __('Documents') }}
+                    </x-nav-link>
                     @if(Auth::user() && Auth::user()->hasRole('admin'))
                         <x-nav-link :href="route('admin.onboarding.index')" :active="request()->routeIs('admin.onboarding.*')">
                             {{ __('Onboarding') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.jobs.index')" :active="request()->routeIs('admin.jobs.*')">
+                            {{ __('Job Listings') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.job-applications.index')" :active="request()->routeIs('admin.job-applications.*')">
+                            {{ __('Applications') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.documents.index')" :active="request()->routeIs('admin.documents.*')">
+                            {{ __('Verify Docs') }}
                         </x-nav-link>
                     @endif
                 </div>
@@ -100,9 +112,21 @@
             <x-responsive-nav-link :href="route('payroll.index')" :active="request()->routeIs('payroll.*')">
                 {{ __('Payroll') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
+                {{ __('Documents') }}
+            </x-responsive-nav-link>
             @if(Auth::user() && Auth::user()->hasRole('admin'))
                 <x-responsive-nav-link :href="route('admin.onboarding.index')" :active="request()->routeIs('admin.onboarding.*')">
                     {{ __('Onboarding') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.jobs.index')" :active="request()->routeIs('admin.jobs.*')">
+                    {{ __('Job Listings') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.job-applications.index')" :active="request()->routeIs('admin.job-applications.*')">
+                    {{ __('Applications') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.documents.index')" :active="request()->routeIs('admin.documents.*')">
+                    {{ __('Verify Docs') }}
                 </x-responsive-nav-link>
             @endif
         </div>
