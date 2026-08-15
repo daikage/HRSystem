@@ -3,40 +3,50 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\EmployeeProfile;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
+    // REMOVED: use WithoutModelEvents;
 
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // Create Admin Role
-        $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);
-        
-        // Create Employee Role
-        $employeeRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'employee']);
+        // 1. Reset Spatie's cached roles and permissions
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create Admin User
-        $adminUser = User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@luminahr.com',
-            'password' => bcrypt('password'), // default password
-        ]);
+        // 2. Create Roles
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $employeeRole = Role::firstOrCreate(['name' => 'employee']);
 
-        // Assign Role
+        // 3. Create or Update Admin User
+        // Using updateOrCreate prevents SQL crash if the user already exists
+        $adminUser = User::updateOrCreate(
+            ['email' => 'admin@luminahr.com'], // Search by email
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+            ]
+        );
+
+        // 4. Assign Role
         $adminUser->assignRole($adminRole);
 
-        // Create a default Employee Profile for the admin
-        \App\Models\EmployeeProfile::create([
-            'user_id' => $adminUser->id,
-            'department' => 'HR',
-            'job_title' => 'HR Administrator',
-            'joining_date' => now(),
-        ]);
+        // 5. Create or Update Employee Profile
+        // Prevents duplicate profile errors on subsequent seeder runs
+        EmployeeProfile::updateOrCreate(
+            ['user_id' => $adminUser->id], // Search by user_id
+            [
+                'department' => 'HR',
+                'job_title' => 'HR Administrator',
+                'joining_date' => now(),
+            ]
+        );
     }
 }
