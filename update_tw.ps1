@@ -1,4 +1,5 @@
-﻿import defaultTheme from 'tailwindcss/defaultTheme';
+$content = @'
+import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
@@ -116,3 +117,7 @@ export default {
 
     plugins: [forms],
 };
+'@
+
+$content | Set-Content -Path 'tailwind.config.js' -Encoding UTF8
+Write-Host 'tailwind.config.js updated successfully'

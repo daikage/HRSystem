@@ -24,12 +24,12 @@
                 box-shadow: 0 8px 32px 0 rgba(147, 51, 234, 0.05);
             }
             .gradient-text {
-                background: linear-gradient(135deg, #9333ea 0%, #c084fc 100%);
+                background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
             .animated-bg {
-                background: linear-gradient(-45deg, #ffffff, #faf5ff, #f3e8ff, #f8fafc);
+                background: linear-gradient(-45deg, #ffffff, #f0f4ff, #e4e8f8, #c8d6f0);
                 background-size: 400% 400%;
                 animation: gradientBG 15s ease infinite;
             }
@@ -61,9 +61,9 @@
         
         <!-- Decorative Background Blobs -->
         <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob"></div>
-            <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-fuchsia-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob animation-delay-2000"></div>
-            <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob animation-delay-4000"></div>
+            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob"></div>
+            <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-secondary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob animation-delay-2000"></div>
+            <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob animation-delay-4000"></div>
         </div>
 
         <!-- Navigation -->
